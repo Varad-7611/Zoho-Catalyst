@@ -1,0 +1,13 @@
+{
+    "command":  "sh -c \u0027python3 -m gunicorn --bind 0.0.0.0:${X_ZOHO_CATALYST_LISTEN_PORT} app:app\u0027",
+    "build_path":  "./",
+    "stack":  "python_3_12",
+    "env_variables":  {
+                          "RAPIDAPI_KEY":  "bfcac2f7c8msh5975dfe7760f093p1cf7f3jsn870c57314d4d",
+                          "RAPIDAPI_HOST":  "cricbuzz-cricket.p.rapidapi.com"
+                      },
+    "memory":  256,
+    "scripts":  {
+
+                }
+}
