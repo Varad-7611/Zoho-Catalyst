@@ -1,0 +1,51 @@
+name: Deploy Cricket API to Catalyst
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cricket-api/**"
+      - ".github/workflows/deploy-catalyst.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: catalyst-development-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Catalyst CLI
+        run: npm install --global zcatalyst-cli
+
+      - name: Deploy AppSail service
+        working-directory: ${{ github.workspace }}
+        env:
+          CATALYST_TOKEN: ${{ secrets.CATALYST_TOKEN }}
+        run: >-
+          catalyst deploy appsail
+          --name cricket-api
+          --build-path "${{ github.workspace }}/cricket-api"
+          --stack python_3_12
+          --command "sh -c 'python3 -m gunicorn --bind 0.0.0.0:\$X_ZOHO_CATALYST_LISTEN_PORT app:app'"
+          --org 60093668819
+          -p 87583000000013050
+          --token "$CATALYST_TOKEN"
+          -ni
+
+      - name: Check deployed health endpoint
+        run: >-
+          curl --fail --silent --show-error --retry 10 --retry-delay 3
+          --retry-connrefused
+          https://cricket-api-50047246450.development.catalystappsail.in/health
