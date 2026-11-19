@@ -42,6 +42,7 @@ jobs:
           --org 60093668819
           -p 87583000000013050
           --token "$CATALYST_TOKEN"
+          --dc in
           -ni
 
       - name: Check deployed health endpoint
